@@ -52,16 +52,17 @@ import kotlinx.coroutines.delay
 data class CalenderDayViewData(
     val day: String,
     val backgroundColor: Long,
-    val textColor:Long,
-    val isToday: Boolean
+    val textColor: Long,
+    val isToday: Boolean,
 )
 
 @Composable
 fun PwWidgetScreen() {
-    var currentTime by remember{
-        mutableStateOf( System.currentTimeMillis())
+    var currentTime by remember {
+        mutableStateOf(System.currentTimeMillis())
     }
-    val quoteStringList =  listOf("You must be the change you wish to see in the world. -Mahatma Gandhi",
+    val quoteStringList = listOf(
+        "You must be the change you wish to see in the world. -Mahatma Gandhi",
         "Spread love everywhere you go. Let no one ever come to you without leaving happier. -Mother Teresa",
         "The only thing we have to fear is fear itself. -Franklin D. Roosevelt",
         "Darkness cannot drive out darkness: only light can do that. Hate cannot drive out hate: only love can do that. -Martin Luther King Jr.",
@@ -70,30 +71,33 @@ fun PwWidgetScreen() {
         "The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart. -Helen Keller",
         "It is during our darkest moments that we must focus to see the light. -Aristotle",
         "Do not go where the path may lead, go instead where there is no path and leave a trail. -Ralph Waldo Emerson",
-        "Be yourself; everyone else is already taken. -Oscar Wilde")
+        "Be yourself; everyone else is already taken. -Oscar Wilde"
+    )
 
     var quoteString by remember {
         mutableStateOf(
             quoteStringList[0]
         )
     }
-    LaunchedEffect(Unit){
-        while(true) {
+    LaunchedEffect(Unit) {
+        while (true) {
             delay(1000)
             currentTime = System.currentTimeMillis()
 
         }
     }
-    LaunchedEffect(Unit){
-        while(true){
-            delay(6*1000)
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(6 * 1000)
             val rand = Random(System.currentTimeMillis()).nextInt(0, quoteStringList.size)
             quoteString = quoteStringList[rand]
         }
     }
 
     val timeText = formatDateTime("HH:mm:ss", currentTime)
-    val dateText = formatDateTime("EEE, dMMM", currentTime)
+    val dateText by remember {
+        mutableStateOf(formatDateTime("EEE, dMMM", currentTime))
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -138,13 +142,20 @@ fun PwWidgetScreen() {
                     containerColor = Color(backgroundColor)
                 ),
                 shape = RoundedCornerShape(40.dp),
-            ) {Column(horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(5.dp)) {
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(5.dp)
+                ) {
 
-                CalenderScreen(dateText)
-                Log.i("sumitsss", " color change $dateText")
-                Text(text = quoteString, modifier=Modifier.padding(2.dp, 20.dp), textAlign = TextAlign.Center)
-            }
+                    CalenderScreen(dateText)
+                    Log.i("sumitsss", " color change $dateText")
+                    Text(
+                        text = quoteString,
+                        modifier = Modifier.padding(2.dp, 20.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
 
             }
             Button(
@@ -160,19 +171,19 @@ fun PwWidgetScreen() {
             }
         }
     }
-
 }
 
 @Composable
 fun CalenderScreen(dateText: String) {
     val dayList = getCalenderDayViewDataList(dateText)
     Log.i("sumitt", "$dayList")
-    Column(modifier = Modifier
-        .background(
-            color = Color.White,
-            shape = RoundedCornerShape(40.dp),
-        )
-        .padding(20.dp),
+    Column(
+        modifier = Modifier
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(40.dp),
+            )
+            .padding(20.dp)
     ) {
         Text(text = "My Space", color = Color.Blue, fontSize = 15.sp)
         Spacer(modifier = Modifier.size(5.dp))
@@ -187,15 +198,17 @@ fun CalenderScreen(dateText: String) {
             Text(text = "Today I will study maths", fontSize = 15.sp)
         }
         Spacer(modifier = Modifier.size(10.dp))
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly) {
-            CalenderDayView(data =dayList[0])
-            CalenderDayView(data =dayList[1])
-            CalenderDayView(data =dayList[2])
-            CalenderDayView(data =dayList[3])
-            CalenderDayView(data =dayList[4])
-            CalenderDayView(data =dayList[5])
-            CalenderDayView(data =dayList[6])
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            CalenderDayView(data = dayList[0])
+            CalenderDayView(data = dayList[1])
+            CalenderDayView(data = dayList[2])
+            CalenderDayView(data = dayList[3])
+            CalenderDayView(data = dayList[4])
+            CalenderDayView(data = dayList[5])
+            CalenderDayView(data = dayList[6])
         }
 
     }
@@ -205,21 +218,35 @@ fun CalenderScreen(dateText: String) {
 fun CalenderDayView(data: CalenderDayViewData) {
     val textMeasurer = rememberTextMeasurer()
     val textLayoutResult = remember {
-        textMeasurer.measure(data.day, style = TextStyle(
-            fontSize = 16.sp,
-            color = Color(data.textColor)))
+        textMeasurer.measure(
+            text = data.day,
+            style = TextStyle(
+                fontSize = 16.sp,
+                color = Color(data.textColor),
+            )
+        )
     }
-    Canvas(modifier = Modifier.size(40.dp)){
+    Canvas(modifier = Modifier.size(40.dp)) {
         val width = size.width
         val height = size.height
         drawCircle(color = Color(data.backgroundColor))
-        this.drawText(textMeasurer = textMeasurer, text = data.day,
+        this.drawText(
+            textMeasurer = textMeasurer, text = data.day,
             style = TextStyle(
                 fontSize = 16.sp,
-                color = Color(data.textColor)),
-            topLeft = Offset(width/2-textLayoutResult.size.width/2, height/2-textLayoutResult.size.height/2))
-        if(data.isToday){
-            drawCircle(color = Color(0xff6093ff), radius = 8f, center = Offset(width/2, height+20f))
+                color = Color(data.textColor),
+            ),
+            topLeft = Offset(
+                width / 2 - textLayoutResult.size.width / 2,
+                height / 2 - textLayoutResult.size.height / 2,
+            )
+        )
+        if (data.isToday) {
+            drawCircle(
+                color = Color(0xff6093ff),
+                radius = 8f,
+                center = Offset(width / 2, height + 20f)
+            )
         }
     }
 }
@@ -235,26 +262,27 @@ fun setPwWidgetScreenInWorkspace(v: ComposeView) {
 
 val backgroundColor = 0xffe7f5ef
 
-fun formatDateTime(format: String, time: Long): String{
-    val formatter = DateFormat.getInstanceForSkeleton(format, Locale.getDefault()).apply{
+fun formatDateTime(format: String, time: Long): String {
+    val formatter = DateFormat.getInstanceForSkeleton(format, Locale.getDefault()).apply {
         setContext(DisplayContext.CAPITALIZATION_FOR_STANDALONE)
     }
     return formatter.format(time)
 }
 
-fun getCalenderDayViewDataList(dateText: String): List<CalenderDayViewData>{
-    val dayIndexMap = mapOf("Mon" to 0, "Tue" to 1, "Wed" to 2, "Thu" to 3, "Fri" to 4, "Sat" to 5, "Sun" to 6)
+fun getCalenderDayViewDataList(dateText: String): List<CalenderDayViewData> {
+    val dayIndexMap =
+        mapOf("Mon" to 0, "Tue" to 1, "Wed" to 2, "Thu" to 3, "Fri" to 4, "Sat" to 5, "Sun" to 6)
     val dayMap = mapOf(0 to "M", 1 to "T", 2 to "W", 3 to "Th", 4 to "F", 5 to "Sa", 6 to "Su")
-    val todayIndex = dayIndexMap[dateText.substring(0..3)]?: 2
-    val textColor:(Int) -> Long={
-        if(it >=  todayIndex){
+    val todayIndex = dayIndexMap[dateText.substring(0..3)] ?: 4
+    val textColor: (Int) -> Long = {
+        if (it >= todayIndex) {
             0xff000000
         } else {
             0xffffffff
         }
     }
-    val backgroundColor:(Int) -> Long={
-        if(it >=  todayIndex){
+    val backgroundColor: (Int) -> Long = {
+        if (it >= todayIndex) {
             0xfff8f8f8
         } else {
             0xff93bea0
@@ -262,13 +290,15 @@ fun getCalenderDayViewDataList(dateText: String): List<CalenderDayViewData>{
     }
 
     val list = mutableListOf<CalenderDayViewData>()
-    for(i in 0..6){
-        list.add(CalenderDayViewData(
-            day = dayMap[i]?:"M",
-            isToday = todayIndex == i,
-            textColor = textColor(i),
-            backgroundColor = backgroundColor(i)
-        ))
+    for (i in 0..6) {
+        list.add(
+            CalenderDayViewData(
+                day = dayMap[i] ?: "M",
+                isToday = todayIndex == i,
+                textColor = textColor(i),
+                backgroundColor = backgroundColor(i),
+            )
+        )
     }
     return list
 
