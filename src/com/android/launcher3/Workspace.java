@@ -69,6 +69,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.compose.ui.platform.ComposeView;
 
 import com.android.launcher3.Utilities;
 import com.android.app.animation.Interpolators;
@@ -668,15 +669,19 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             // In transposed layout, we add the QSB in the Grid. As workspace does not touch
             // the
             // edges, we do not need a full width QSB.
-            mFirstPagePinnedItem = LayoutInflater.from(getContext())
-                    .inflate(smartspaceMode.getLayoutResourceId(), firstPage, false);
+            //            mFirstPagePinnedItem = LayoutInflater.from(getContext())
+//                    .inflate(smartspaceMode.getLayoutResourceId(), firstPage, false);
         }
-
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.pw_home_banner_view, firstPage, false);
+        ComposeView composeView = v.findViewById(R.id.compose_view);
+        PwHomeBannerKt.setPwWidgetScreenInWorkspace(composeView);
         int cellHSpan = mLauncher.getDeviceProfile().inv.numColumns;
-        CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, 1);
+        int cellVSpan = mLauncher.getDeviceProfile().inv.numRows;
+        CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, cellVSpan);
         lp.canReorder = false;
+        lp.isLockedToGrid = true;
         if (!firstPage.addViewToCellLayout(
-                mFirstPagePinnedItem, 0, R.id.search_container_workspace, lp, true)) {
+            v, 0, R.id.pw_home_banner_view_container, lp, true)) {
             Log.e(TAG, "Failed to add to item at (0, 0) to CellLayout");
         }
     }
