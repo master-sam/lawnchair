@@ -1,7 +1,10 @@
 package com.android.launcher3
 
+import android.content.Context
+import android.content.Intent
 import android.icu.text.DateFormat
 import android.icu.text.DisplayContext
+import android.provider.Settings
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -41,9 +44,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import java.util.Locale
 import kotlin.random.Random
 import kotlinx.coroutines.delay
@@ -57,7 +60,7 @@ data class CalenderDayViewData(
 )
 
 @Composable
-fun PwWidgetScreen() {
+fun PwWidgetScreen(context: Context) {
     var currentTime by remember {
         mutableStateOf(System.currentTimeMillis())
     }
@@ -159,7 +162,10 @@ fun PwWidgetScreen() {
 
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    val settingIntent = Intent(Settings.ACTION_SETTINGS)
+                    startActivity(context, settingIntent, null)
+                },
                 modifier = Modifier
                     .align(BottomCenter)
                     .height(40.dp)
@@ -253,10 +259,10 @@ fun CalenderDayView(data: CalenderDayViewData) {
     }
 }
 
-fun setPwWidgetScreenInWorkspace(v: ComposeView) {
+fun setPwWidgetScreenInWorkspace(v: ComposeView, context: Context) {
     v.setContent {
         MaterialTheme {
-            PwWidgetScreen()
+            PwWidgetScreen(context)
         }
     }
 
@@ -305,10 +311,4 @@ fun getCalenderDayViewDataList(dateText: String): List<CalenderDayViewData> {
     }
     return list
 
-}
-
-@Preview
-@Composable
-fun PWpreview() {
-    PwWidgetScreen()
 }

@@ -674,7 +674,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         }
         View v = LayoutInflater.from(getContext()).inflate(R.layout.pw_home_banner_view, firstPage, false);
         ComposeView composeView = v.findViewById(R.id.compose_view);
-        PwHomeBannerKt.setPwWidgetScreenInWorkspace(composeView);
+        PwHomeBannerKt.setPwWidgetScreenInWorkspace(composeView, getContext());
         int cellHSpan = mLauncher.getDeviceProfile().inv.numColumns;
         int cellVSpan = mLauncher.getDeviceProfile().inv.numRows;
         CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, cellVSpan);
