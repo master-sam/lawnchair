@@ -175,7 +175,9 @@ fun PwWidgetScreen() {
 
 @Composable
 fun CalenderScreen(dateText: String) {
-    val dayList = getCalenderDayViewDataList(dateText)
+    val dayList by remember{
+        mutableStateOf(getCalenderDayViewDataList(dateText))
+    }
     Log.i("sumitt", "$dayList")
     Column(
         modifier = Modifier
@@ -270,10 +272,11 @@ fun formatDateTime(format: String, time: Long): String {
 }
 
 fun getCalenderDayViewDataList(dateText: String): List<CalenderDayViewData> {
+    Log.i("sumitt", "dateText  $dateText")
     val dayIndexMap =
         mapOf("Mon" to 0, "Tue" to 1, "Wed" to 2, "Thu" to 3, "Fri" to 4, "Sat" to 5, "Sun" to 6)
     val dayMap = mapOf(0 to "M", 1 to "T", 2 to "W", 3 to "Th", 4 to "F", 5 to "Sa", 6 to "Su")
-    val todayIndex = dayIndexMap[dateText.substring(0..3)] ?: 4
+    val todayIndex = dayIndexMap[dateText.substring(0..2)] ?: 0
     val textColor: (Int) -> Long = {
         if (it >= todayIndex) {
             0xff000000
